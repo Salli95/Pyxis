@@ -1,6 +1,6 @@
 package com.example.pyxis;
 
-//Здесь поля для базы
+// Здесь поля для базы
 // База должна быть обязаьельно с этими полями
 
 public class DatabaseFields {
