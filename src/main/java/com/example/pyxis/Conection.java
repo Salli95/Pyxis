@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class Conection extends ConfigsDataBase {
 
-    Connection dbConnection;
+    Connection dbConnection ;
 
     public Connection getDbConnection()
             throws ClassNotFoundException, SQLException {
