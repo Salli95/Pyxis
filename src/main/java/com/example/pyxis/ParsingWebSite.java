@@ -10,10 +10,10 @@ public class ParsingWebSite {
     public void parseData() throws IOException {
 
         String apiKey = "12556c21f1bc4b493c409a2c6fcedeb2";  // Не трогать
-        String lat = "40.7128";
-        String lon = "-74.0060";
+        String lat = "43.2220"; // Широта Алматы
+        String lon = "76.8512"; // Долгота Алматы
 
-        URL url = new URL("https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey);
+        URL url = new URL("https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
 
@@ -35,44 +35,77 @@ public class ParsingWebSite {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(responseBody);
 
-            // Извлечение данных
-            String cityName = rootNode.path("name").asText();
-            int idWeather = rootNode.path("weather").get(0).path("id").asInt();
-            long forecastDateUnix = rootNode.path("dt").asLong();
-            double temperatureKelvin = rootNode.path("main").path("temp").asDouble();
-            String description = rootNode.path("weather").get(0).path("description").asText();
-            int humidity = rootNode.path("main").path("humidity").asInt();
-            double windSpeed = rootNode.path("wind").path("speed").asDouble();
-            int windDirection = rootNode.path("wind").path("deg").asInt();
-            double precipitationProbability = 0; // API текущей погоды не предоставляет эти данные
-            long sunriseUnix = rootNode.path("sys").path("sunrise").asLong();
-            long sunsetUnix = rootNode.path("sys").path("sunset").asLong();
-            String weatherIcon = rootNode.path("weather").get(0).path("icon").asText();
+            // Получаем список прогнозов
+            JsonNode listNode = rootNode.path("list");
 
-            // Конвертация Unix-времени в Timestamp
-            Timestamp forecastDate = new Timestamp(forecastDateUnix * 1000);
-            Timestamp sunriseTime = new Timestamp(sunriseUnix * 1000);
-            Timestamp sunsetTime = new Timestamp(sunsetUnix * 1000);
+            // Счетчик для ограничения до 5 дней
+            int dayCount = 0;
+            String lastDate = "";
 
-            // Конвертация температуры из Кельвинов в Цельсии
-            double temperatureCelsius = temperatureKelvin - 273.15;
+            for (JsonNode forecastNode : listNode) {
+                // Извлечение данных
+                String dt_txt = forecastNode.path("dt_txt").asText();
+                String datePart = dt_txt.split(" ")[0]; // Получаем дату (YYYY-MM-DD)
 
-            // Установка текущего времени для forecastTime
-            Timestamp forecastTime = new Timestamp(System.currentTimeMillis());
+                // Проверяем, изменился ли день
+                if (!datePart.equals(lastDate)) {
+                    lastDate = datePart;
+                    dayCount++;
+                    if (dayCount > 5) {
+                        break;
+                    }
 
-            // Вставка данных в базу данных
-            insertDataIntoDatabase(cityName, idWeather, forecastDate, temperatureCelsius, description, humidity,
-                    windSpeed, windDirection, precipitationProbability, sunriseTime, sunsetTime, weatherIcon, forecastTime);
+                    // Извлечение данных для прогноза
+                    long forecastDateUnix = forecastNode.path("dt").asLong();
+                    JsonNode mainNode = forecastNode.path("main");
+                    double temperatureKelvin = mainNode.path("temp").asDouble();
+                    int humidity = mainNode.path("humidity").asInt();
+                    int pressure = mainNode.path("pressure").asInt();
+                    double feelsLikeKelvin = mainNode.path("feels_like").asDouble();
+
+                    double temperatureCelsius = temperatureKelvin - 273.15;
+                    double feelsLikeCelsius = feelsLikeKelvin - 273.15;
+
+                    JsonNode weatherArray = forecastNode.path("weather");
+                    String description = weatherArray.get(0).path("description").asText();
+                    String weatherIcon = weatherArray.get(0).path("icon").asText();
+
+                    JsonNode windNode = forecastNode.path("wind");
+                    double windSpeed = windNode.path("speed").asDouble();
+                    int windDirection = windNode.path("deg").asInt();
+
+                    double precipitationProbability = forecastNode.path("pop").asDouble(); // Вероятность осадков
+
+                    // Конвертация Unix-времени в Timestamp
+                    Timestamp forecastDate = new Timestamp(forecastDateUnix * 1000);
+
+                    // Поскольку время восхода и заката не предоставляется в этом API, устанавливаем null
+                    Timestamp sunriseTime = null;
+                    Timestamp sunsetTime = null;
+
+                    // Установка текущего времени для forecastTime
+                    Timestamp forecastTime = new Timestamp(System.currentTimeMillis());
+
+                    // Преобразование направления ветра в строку
+                    String windDirectionStr = getWindDirection(windDirection);
+
+                    // Вставка данных в базу данных
+                    insertDataIntoDatabase("Алматы", forecastDate, temperatureCelsius, description, humidity,
+                            windSpeed, windDirectionStr, precipitationProbability, sunriseTime, sunsetTime, weatherIcon, forecastTime,
+                            pressure, feelsLikeCelsius, 0); // uv_index устанавливаем в 0
+                }
+            }
 
         } else {
             System.out.println("Ошибка: " + responseCode);
         }
     }
 
-    private void insertDataIntoDatabase(String cityName, int idWeather, Timestamp forecastDate, double temperature,
-                                        String description, int humidity, double windSpeed, int windDirection,
+    private void insertDataIntoDatabase(String cityName, Timestamp forecastDate, double temperature,
+                                        String description, int humidity, double windSpeed, String windDirection,
                                         double precipitationProbability, Timestamp sunriseTime,
-                                        Timestamp sunsetTime, String weatherIcon, Timestamp forecastTime) {
+                                        Timestamp sunsetTime, String weatherIcon, Timestamp forecastTime,
+                                        int pressure, double feelsLikeTemperature, int uvIndex) {
 
         Conection connectionClass = new Conection();
         Connection conn = null;
@@ -85,7 +118,6 @@ public class ParsingWebSite {
             // Подготовка SQL-запроса для вставки данных
             String sql = "INSERT INTO " + DatabaseFields.Table_weather + " (" +
                     DatabaseFields.city + ", " +
-                    DatabaseFields.idWeather + ", " +
                     DatabaseFields.forecast_date + ", " +
                     DatabaseFields.temperature + ", " +
                     DatabaseFields.description + ", " +
@@ -97,25 +129,35 @@ public class ParsingWebSite {
                     DatabaseFields.sunset_time + ", " +
                     DatabaseFields.weather_icon + ", " +
                     DatabaseFields.forecast_time +
-                    ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, cityName);
-            pstmt.setInt(2, idWeather);
-            pstmt.setTimestamp(3, forecastDate);
-            pstmt.setDouble(4, temperature);
-            pstmt.setString(5, description);
-            pstmt.setInt(6, humidity);
-            pstmt.setDouble(7, windSpeed);
-            pstmt.setInt(8, windDirection);
-            pstmt.setDouble(9, precipitationProbability);
-            pstmt.setTime(10, new Time(sunriseTime.getTime()));
-            pstmt.setTime(11, new Time(sunsetTime.getTime()));
-            pstmt.setString(12, weatherIcon);
-            pstmt.setTimestamp(13, forecastTime); // Изменено на setTimestamp
+            pstmt.setTimestamp(2, forecastDate); // forecast_date (DATE)
+            pstmt.setDouble(3, temperature);
+            pstmt.setString(4, description);
+            pstmt.setInt(5, humidity);
+            pstmt.setDouble(6, windSpeed);
+            pstmt.setString(7, windDirection); // wind_direction (VARCHAR)
+            pstmt.setInt(8, pressure);
+            pstmt.setDouble(9, feelsLikeTemperature);
+            pstmt.setDouble(10, precipitationProbability);
+            pstmt.setInt(11, uvIndex);
+            if (sunriseTime != null) {
+                pstmt.setTime(12, new Time(sunriseTime.getTime()));
+            } else {
+                pstmt.setNull(12, Types.TIME);
+            }
+            if (sunsetTime != null) {
+                pstmt.setTime(13, new Time(sunsetTime.getTime()));
+            } else {
+                pstmt.setNull(13, Types.TIME);
+            }
+            pstmt.setString(14, weatherIcon);
+            pstmt.setTimestamp(15, forecastTime); // forecast_time (DATETIME)
 
-            // Выполнение вставки данны
-             int rowsInserted = pstmt.executeUpdate();
+            // Выполнение вставки данных
+            int rowsInserted = pstmt.executeUpdate();
             if (rowsInserted > 0) {
                 System.out.println("Данные успешно вставлены в базу данных.");
             } else {
@@ -134,4 +176,11 @@ public class ParsingWebSite {
         }
     }
 
+    // Метод для преобразования градусов в направление ветра
+    public static String getWindDirection(int degrees) {
+        String[] directions = {"С", "ССВ", "СВ", "ВСВ", "В", "ВЮВ", "ЮВ", "ЮЮВ",
+                "Ю", "ЮЮЗ", "ЮЗ", "ЗЮЗ", "З", "ЗСЗ", "СЗ", "ССЗ"};
+        int index = (int)((degrees / 22.5) + 0.5) % 16;
+        return directions[index];
+    }
 }
