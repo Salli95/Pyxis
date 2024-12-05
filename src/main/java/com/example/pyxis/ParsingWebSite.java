@@ -114,7 +114,7 @@ public class ParsingWebSite {
             pstmt.setString(12, weatherIcon);
             pstmt.setTimestamp(13, forecastTime); // Изменено на setTimestamp
 
-            // Выполнение вставки данных
+            // Выполнение вставки данны
             int rowsInserted = pstmt.executeUpdate();
             if (rowsInserted > 0) {
                 System.out.println("Данные успешно вставлены в базу данных.");
