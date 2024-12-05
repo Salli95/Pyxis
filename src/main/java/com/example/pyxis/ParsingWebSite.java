@@ -115,7 +115,7 @@ public class ParsingWebSite {
             pstmt.setTimestamp(13, forecastTime); // Изменено на setTimestamp
 
             // Выполнение вставки данны
-            int rowsInserted = pstmt.executeUpdate();
+             int rowsInserted = pstmt.executeUpdate();
             if (rowsInserted > 0) {
                 System.out.println("Данные успешно вставлены в базу данных.");
             } else {
