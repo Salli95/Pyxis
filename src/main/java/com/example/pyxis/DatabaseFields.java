@@ -14,8 +14,6 @@ public class DatabaseFields {
     public static final String wind_speed = "wind_speed";
     public static final String wind_direction = "wind_direction";
     public static final String precipitation_probability = "precipitation_probability";
-    public static final String sunrise_time = "sunrise_time";
-    public static final String sunset_time = "sunset_time";
     public static final String weather_icon = "weather_icon";
     public static final String forecast_time = "forecast_time";
 

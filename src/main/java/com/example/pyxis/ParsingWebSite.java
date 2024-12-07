@@ -91,8 +91,7 @@ public class ParsingWebSite {
 
                     // Вставка данных в базу данных
                     insertDataIntoDatabase("Алматы", forecastDate, temperatureCelsius, description, humidity,
-                            windSpeed, windDirectionStr, precipitationProbability, sunriseTime, sunsetTime, weatherIcon, forecastTime,
-                            pressure, feelsLikeCelsius, 0); // uv_index устанавливаем в 0
+                            windSpeed, String.valueOf(windDirection), (int) (precipitationProbability * 100), weatherIcon, forecastTime);
                 }
             }
 
@@ -103,9 +102,7 @@ public class ParsingWebSite {
 
     private void insertDataIntoDatabase(String cityName, Timestamp forecastDate, double temperature,
                                         String description, int humidity, double windSpeed, String windDirection,
-                                        double precipitationProbability, Timestamp sunriseTime,
-                                        Timestamp sunsetTime, String weatherIcon, Timestamp forecastTime,
-                                        int pressure, double feelsLikeTemperature, int uvIndex) {
+                                        int precipitationProbability, String weatherIcon, Timestamp forecastTime) {
 
         Conection connectionClass = new Conection();
         Connection conn = null;
@@ -125,11 +122,9 @@ public class ParsingWebSite {
                     DatabaseFields.wind_speed + ", " +
                     DatabaseFields.wind_direction + ", " +
                     DatabaseFields.precipitation_probability + ", " +
-                    DatabaseFields.sunrise_time + ", " +
-                    DatabaseFields.sunset_time + ", " +
                     DatabaseFields.weather_icon + ", " +
                     DatabaseFields.forecast_time +
-                    ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, cityName);
@@ -139,22 +134,9 @@ public class ParsingWebSite {
             pstmt.setInt(5, humidity);
             pstmt.setDouble(6, windSpeed);
             pstmt.setString(7, windDirection); // wind_direction (VARCHAR)
-            pstmt.setInt(8, pressure);
-            pstmt.setDouble(9, feelsLikeTemperature);
-            pstmt.setDouble(10, precipitationProbability);
-            pstmt.setInt(11, uvIndex);
-            if (sunriseTime != null) {
-                pstmt.setTime(12, new Time(sunriseTime.getTime()));
-            } else {
-                pstmt.setNull(12, Types.TIME);
-            }
-            if (sunsetTime != null) {
-                pstmt.setTime(13, new Time(sunsetTime.getTime()));
-            } else {
-                pstmt.setNull(13, Types.TIME);
-            }
-            pstmt.setString(14, weatherIcon);
-            pstmt.setTimestamp(15, forecastTime); // forecast_time (DATETIME)
+            pstmt.setInt(8, precipitationProbability);
+            pstmt.setString(9, weatherIcon);
+            pstmt.setTimestamp(10, forecastTime); // forecast_timeDATETIME)
 
             // Выполнение вставки данных
             int rowsInserted = pstmt.executeUpdate();

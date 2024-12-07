@@ -40,11 +40,7 @@ public class testDataBase {
         System.out.print("Введите значение поля " + DatabaseFields.precipitation_probability + ": ");
         String precipitation_probability = scanner.nextLine();
 
-        System.out.print("Введите значение поля " + DatabaseFields.sunrise_time + ": ");
-        String sunrise_time = scanner.nextLine();
-
-        System.out.print("Введите значение поля " + DatabaseFields.sunset_time + ": ");
-        String sunset_time = scanner.nextLine();
+      ;
 
         System.out.print("Введите значение поля " + DatabaseFields.weather_icon + ": ");
         String weather_icon = scanner.nextLine();
@@ -53,7 +49,7 @@ public class testDataBase {
         String forecast_time = scanner.nextLine();
 
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + DatabaseFields.Table_weather + " (" + DatabaseFields.city + ", " + DatabaseFields.idWeather + ", " + DatabaseFields.forecast_date + ", " + DatabaseFields.temperature + ", " + DatabaseFields.description + ", " + DatabaseFields.humidity + ", " + DatabaseFields.wind_speed + ", " + DatabaseFields.wind_direction + ", " + DatabaseFields.precipitation_probability + ", " + DatabaseFields.sunrise_time + ", " + DatabaseFields.sunset_time + ", " + DatabaseFields.weather_icon + ", " + DatabaseFields.forecast_time + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + DatabaseFields.Table_weather + " (" + DatabaseFields.city + ", " + DatabaseFields.idWeather + ", " + DatabaseFields.forecast_date + ", " + DatabaseFields.temperature + ", " + DatabaseFields.description + ", " + DatabaseFields.humidity + ", " + DatabaseFields.wind_speed + ", " + DatabaseFields.wind_direction + ", " + DatabaseFields.precipitation_probability + ", " +  ", " + DatabaseFields.weather_icon + ", " + DatabaseFields.forecast_time + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             statement.setString(1, city);
             statement.setString(2, idWeather);
             statement.setString(3, forecast_date);
@@ -63,10 +59,8 @@ public class testDataBase {
             statement.setString(7, wind_speed);
             statement.setString(8, wind_direction);
             statement.setString(9, precipitation_probability);
-            statement.setString(10, sunrise_time);
-            statement.setString(11, sunset_time);
-            statement.setString(12, weather_icon);
-            statement.setString(13, forecast_time);
+            statement.setString(10, weather_icon);
+            statement.setString(11, forecast_time);
             statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Ошибка ввода данных в базу данных: " + e.getMessage());
