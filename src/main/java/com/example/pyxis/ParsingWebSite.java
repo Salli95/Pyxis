@@ -35,6 +35,8 @@ public class ParsingWebSite {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(responseBody);
 
+            clearAllData();  // Вызов метода очистки данных
+
             // Получаем список прогнозов
             JsonNode listNode = rootNode.path("list");
 
@@ -151,6 +153,33 @@ public class ParsingWebSite {
             // Закрытие ресурсов
             try {
                 if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void clearAllData() {
+        Conection connectionClass = new Conection();
+        Connection conn = null;
+        Statement stmt = null;
+
+        try {
+            conn = connectionClass.getDbConnection();
+
+            // Удаляем все данные из таблицы
+            String sql = "DELETE FROM " + DatabaseFields.Table_weather;
+
+            stmt = conn.createStatement();
+            int rowsDeleted = stmt.executeUpdate(sql);
+            System.out.println("Удалено всех записей: " + rowsDeleted);
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
                 if (conn != null) conn.close();
             } catch (SQLException ex) {
                 ex.printStackTrace();
