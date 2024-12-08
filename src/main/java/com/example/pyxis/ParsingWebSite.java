@@ -81,7 +81,9 @@ public class ParsingWebSite {
                     // Конвертация Unix-времени в Timestamp
                     Timestamp forecastDate = new Timestamp(forecastDateUnix * 1000);
 
-
+                    // Поскольку время восхода и заката не предоставляется в этом API, устанавливаем null
+                    Timestamp sunriseTime = null;
+                    Timestamp sunsetTime = null;
 
                     // Установка текущего времени для forecastTime
                     Timestamp forecastTime = new Timestamp(System.currentTimeMillis());
@@ -128,15 +130,15 @@ public class ParsingWebSite {
 
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, cityName);
-            pstmt.setTimestamp(2, forecastDate);
+            pstmt.setTimestamp(2, forecastDate); // forecast_date (DATE)
             pstmt.setDouble(3, temperature);
             pstmt.setString(4, description);
             pstmt.setInt(5, humidity);
             pstmt.setDouble(6, windSpeed);
-            pstmt.setString(7, windDirection);
+            pstmt.setString(7, windDirection); // wind_direction (VARCHAR)
             pstmt.setInt(8, precipitationProbability);
             pstmt.setString(9, weatherIcon);
-            pstmt.setTimestamp(10, forecastTime);
+            pstmt.setTimestamp(10, forecastTime); // forecast_timeDATETIME)
 
             // Выполнение вставки данных
             int rowsInserted = pstmt.executeUpdate();

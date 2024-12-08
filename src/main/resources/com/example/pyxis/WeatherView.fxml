@@ -11,6 +11,6 @@
       <HBox fx:id="Weather_output" layoutX="32.0" layoutY="22.0" prefHeight="214.0" prefWidth="613.0" />
       <Label fx:id="output" alignment="CENTER" contentDisplay="CENTER" layoutX="147.0" layoutY="313.0" prefHeight="25.0" prefWidth="384.0" />
       <Label fx:id="city" layoutX="14.0" layoutY="266.0" prefHeight="33.0" prefWidth="164.0" />
-      <Label fx:id="time_of_update" layoutX="596.0" layoutY="286.0" prefHeight="54.0" prefWidth="71.0" textAlignment="CENTER" />
+      <Label fx:id="time_of_update" layoutX="394.0" layoutY="280.0" prefHeight="42.0" prefWidth="262.0" />
    </children>
 </Pane>
