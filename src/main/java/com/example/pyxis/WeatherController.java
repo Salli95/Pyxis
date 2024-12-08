@@ -20,7 +20,6 @@ public class WeatherController {
     @FXML
     private Label output;     // поле для вывода текстового сообщения
 
-
     @FXML
     private Label city;
 
@@ -33,11 +32,11 @@ public class WeatherController {
         parsingWebSite.parseData();
         selectCity();
 
-        output.setText("Погода успешно обновленана ближайшие 5 дней.");
+        output.setText("Погода успешно обновлена на ближайшие 5 дней.");
     }
 
 @FXML
-private void selectCity() throws SQLException, ClassNotFoundException {
+public void selectCity() throws SQLException, ClassNotFoundException {
     // Подключение к базе данных
     Connection connection = new Conection().getDbConnection();
 
@@ -48,14 +47,14 @@ private void selectCity() throws SQLException, ClassNotFoundException {
 
         if (resultSet.next()) {
             // Получаем город
-            city.setText("Город: " + resultSet.getString("city"));
+            city.setText("City: " + resultSet.getString("city"));
 
             // Получаем время последнего обновления
             Timestamp lastUpdated = resultSet.getTimestamp("forecast_time");
             if (lastUpdated != null) {
                 // Преобразуем время в строку для отображения
-                String formattedTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(lastUpdated);
-                time_of_update.setText("Последнее обновление: " + formattedTime);
+                String formattedTime = new SimpleDateFormat("dd.MM.yyyy \n HH:mm:ss").format(lastUpdated);
+                time_of_update.setText("Last update: \n" +  formattedTime);
             } else {
                 output.setText("Время обновления не доступно.");
             }
