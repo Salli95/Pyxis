@@ -5,8 +5,10 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 
+<?import javafx.scene.image.ImageView?>
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="377.0" prefWidth="670.0" style="-fx-background-color: #FFDEAD;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pyxis.WeatherController">
    <children>
+      <ImageView fx:id="weatherIcon" fitWidth="100" fitHeight="100" />
       <Button fx:id="Update" layoutX="604.0" layoutY="338.0" mnemonicParsing="false" onAction="#updateWeather" style="-fx-background-color: #87CEFA;" text="Update" />
       <HBox fx:id="Weather_output" layoutX="32.0" layoutY="22.0" prefHeight="214.0" prefWidth="613.0" />
       <Label fx:id="output" alignment="CENTER" contentDisplay="CENTER" layoutX="147.0" layoutY="313.0" prefHeight="25.0" prefWidth="384.0" />
