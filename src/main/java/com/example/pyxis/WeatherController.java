@@ -115,6 +115,7 @@ public void selectCity() throws SQLException, ClassNotFoundException {
             int dayIndex = 0;
             while (resultSet.next()) {
                 String iconCode = resultSet.getString("weather_icon");
+                iconCode = iconCode.replace("n", "d");
                 if (iconCode != null) {
                     String imageUrl = "https://openweathermap.org/img/wn/" + iconCode + "@2x.png";
                     ImageView iconImageView = getIconImageView(dayIndex);
