@@ -8,7 +8,7 @@ public class Conection extends ConfigsDataBase {
 
     Connection dbConnection ;
 
-    public Connection getDbConnection()
+    public  Connection getDbConnection()
             throws ClassNotFoundException, SQLException {
         String dbUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName;
         Class.forName("com.mysql.cj.jdbc.Driver");

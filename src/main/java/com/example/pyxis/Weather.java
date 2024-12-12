@@ -24,6 +24,7 @@ public class Weather extends Application {
 
             try {
                 controller.selectCity();
+                controller.fillWeatherData();
                 controller.displayWeatherIcons();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
