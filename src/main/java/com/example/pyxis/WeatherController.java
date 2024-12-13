@@ -6,7 +6,10 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-
+import java.time.LocalDate;
+import java.time.DayOfWeek;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import java.io.IOException;
 import java.sql.*;
@@ -124,6 +127,30 @@ public class WeatherController {
     public void initialize() throws SQLException, ClassNotFoundException {
         selectCity();
     }
+    @FXML
+    private void showMoreDay1() throws SQLException, ClassNotFoundException {
+        showMoreForDay(Day1);
+    }
+
+    @FXML
+    private void showMoreDay2() throws SQLException, ClassNotFoundException {
+        showMoreForDay(Day2);
+    }
+
+    @FXML
+    private void showMoreDay3() throws SQLException, ClassNotFoundException {
+        showMoreForDay(Day3);
+    }
+
+    @FXML
+    private void showMoreDay4() throws SQLException, ClassNotFoundException {
+        showMoreForDay(Day4);
+    }
+
+    @FXML
+    private void showMoreDay5() throws SQLException, ClassNotFoundException {
+        showMoreForDay(Day5);
+    }
 
 
     @FXML
@@ -134,6 +161,55 @@ public class WeatherController {
         output.setText("Погода успешно обновлена на ближайшие 5 дней.");
         displayWeatherIcons();
     }
+
+    private void showMoreForDay(Label dayLabel) throws SQLException, ClassNotFoundException {
+        String date = (String) dayLabel.getUserData();
+        showAdditionalWeatherData(date);
+    }
+    private void showAdditionalWeatherData(String date) throws SQLException, ClassNotFoundException {
+        Connection connection = new Conection().getDbConnection();
+
+        // Добавляем поля wind_speed и description в запрос
+        String sql = "SELECT "
+                + DatabaseFields.humidity + ", "
+                + DatabaseFields.wind_direction + ", "
+                + DatabaseFields.precipitation_probability + ", "
+                + DatabaseFields.wind_speed + ", "
+                + DatabaseFields.description + " "
+                + "FROM " + DatabaseFields.Table_weather + " WHERE " + DatabaseFields.forecast_date + " = ? LIMIT 1";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, date);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    int humidity = resultSet.getInt(DatabaseFields.humidity);
+                    double windDirection = resultSet.getDouble(DatabaseFields.wind_direction);
+                    int precipitationProbability = resultSet.getInt(DatabaseFields.precipitation_probability);
+                    double windSpeed = resultSet.getDouble(DatabaseFields.wind_speed);
+                    String desc = resultSet.getString(DatabaseFields.description);
+
+                    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+                    alert.setTitle("More Weather Details");
+                    alert.setHeaderText("Additional details for " + date);
+                    alert.setContentText(
+                            "Description: " + desc + "\n" +
+                                    "Humidity: " + humidity + "%\n" +
+                                    "Wind Direction: " + windDirection + "°\n" +
+                                    "Wind Speed: " + windSpeed + " m/s\n" +
+                                    "Precipitation Probability: " + precipitationProbability + "%"
+                    );
+                    alert.showAndWait();
+                } else {
+                    output.setText("No additional data available for " + date);
+                }
+            }
+        } catch (SQLException e) {
+            output.setText("Error retrieving additional weather data: " + e.getMessage());
+        } finally {
+            connection.close();
+        }
+    }
+
 
 @FXML
 public void selectCity() throws SQLException, ClassNotFoundException {
@@ -242,6 +318,10 @@ public void selectCity() throws SQLException, ClassNotFoundException {
                 ResultSet resultSet = statement.executeQuery(query);
                 System.out.println("Query executed successfully.");
 
+                // Массив русских названий дней недели:
+                // DayOfWeek.getValue() дает: Monday=1, Tuesday=2, ..., Sunday=7
+                String[] daysEng = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+
                 int i = 0;
                 while (resultSet.next()) {
                     if (i >= mainpanel.getChildren().size()) {
@@ -255,19 +335,31 @@ public void selectCity() throws SQLException, ClassNotFoundException {
                         continue;
                     }
 
-                    // Проверяем элементы VBox перед преобразованием
-                    if (vbox.getChildren().size() >= 4) {
-                        Label dayLabel = (Label) vbox.getChildren().get(1); // Второй элемент
-                        Label temperatureLabel = (Label) vbox.getChildren().get(2); // Третий элемент
-                        Label windSpeedLabel = (Label) vbox.getChildren().get(3); // Четвёртый элемент
-                        Label probabilityLabel = (Label) vbox.getChildren().get(4); // Пятый элемент
+                    if (vbox.getChildren().size() >= 5) {
+                        Label dayLabel = (Label) vbox.getChildren().get(1); // Второй элемент в VBox
+                        Label temperatureLabel = (Label) vbox.getChildren().get(2); // Третий
+                        Label windSpeedLabel = (Label) vbox.getChildren().get(3); // Четвёртый
+                        Label probabilityLabel = (Label) vbox.getChildren().get(4); // Пятый
 
                         String forecastDate = resultSet.getString("forecast_date");
                         double temperature = resultSet.getDouble("temperature");
                         double windSpeed = resultSet.getDouble("wind_speed");
                         int precipitationProbability = resultSet.getInt("precipitation_probability");
 
-                        dayLabel.setText("Date: " + forecastDate);
+                        // Преобразуем строку с датой в LocalDate
+                        // Предполагается, что forecast_date в формате "YYYY-MM-DD"
+                        LocalDate date = LocalDate.parse(forecastDate);
+
+                        // Получаем день недели
+                        DayOfWeek dayOfWeek = date.getDayOfWeek();
+                        // Конвертируем его в индекс для массива daysRus
+                        // Monday=1, ... Sunday=7
+                        int dayIndex = dayOfWeek.getValue();
+                        String dayName = daysEng[dayIndex - 1];
+
+                        // Устанавливаем значения
+                        dayLabel.setText("Day: " + dayName);
+                        dayLabel.setUserData(forecastDate);
                         temperatureLabel.setText("Temperature: " + temperature + "°C");
                         windSpeedLabel.setText("Wind Speed: " + windSpeed + " m/s");
                         probabilityLabel.setText("Probability: " + precipitationProbability + "%");

@@ -22,7 +22,12 @@
                   <Label fx:id="temperature1" prefHeight="20.0" prefWidth="130.0" text="temperature: " />
                   <Label fx:id="windspped1" prefHeight="18.0" prefWidth="130.0" text="wind spped: " />
                   <Label fx:id="probability1" prefHeight="18.0" prefWidth="130.0" text="probability: " />
-                  <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#updateWeather" style="-fx-background-color: #87CEFA; -fx-background-radius: 7;" text="More" textAlignment="CENTER" />
+                  <Button contentDisplay="CENTER"
+                          mnemonicParsing="false"
+                          onAction="#showMoreDay1"
+                          style="-fx-background-color: #87CEFA; -fx-background-radius: 7;"
+                          text="More"
+                          textAlignment="CENTER" />
                </children>
             </VBox>
             <VBox fx:id="day2" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="130.0">
@@ -32,6 +37,12 @@
                   <Label fx:id="temperature2" prefHeight="20.0" prefWidth="130.0" text="temperature: " />
                   <Label fx:id="windspped2" prefHeight="18.0" prefWidth="130.0" text="wind spped: " />
                   <Label fx:id="probability2" prefHeight="18.0" prefWidth="130.0" text="probability: " />
+                  <Button contentDisplay="CENTER"
+                          mnemonicParsing="false"
+                          onAction="#showMoreDay2"
+                          style="-fx-background-color: #87CEFA; -fx-background-radius: 7;"
+                          text="More"
+                          textAlignment="CENTER" />
                </children>
             </VBox>
             <VBox fx:id="day3" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="130.0">
@@ -41,6 +52,12 @@
                   <Label fx:id="temperature3" prefHeight="20.0" prefWidth="130.0" text="temperature: " />
                   <Label fx:id="windspped3" prefHeight="18.0" prefWidth="130.0" text="wind spped: " />
                   <Label fx:id="probability3" prefHeight="18.0" prefWidth="130.0" text="probability: " />
+                  <Button contentDisplay="CENTER"
+                          mnemonicParsing="false"
+                          onAction="#showMoreDay3"
+                          style="-fx-background-color: #87CEFA; -fx-background-radius: 7;"
+                          text="More"
+                          textAlignment="CENTER" />
                </children>
             </VBox>
             <VBox fx:id="day4" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="130.0">
@@ -50,6 +67,12 @@
                   <Label fx:id="temperature4" prefHeight="20.0" prefWidth="130.0" text="temperature: " />
                   <Label fx:id="windspped4" prefHeight="18.0" prefWidth="130.0" text="wind spped: " />
                   <Label fx:id="probability4" prefHeight="18.0" prefWidth="130.0" text="probability: " />
+                  <Button contentDisplay="CENTER"
+                          mnemonicParsing="false"
+                          onAction="#showMoreDay4"
+                          style="-fx-background-color: #87CEFA; -fx-background-radius: 7;"
+                          text="More"
+                          textAlignment="CENTER" />
                </children>
             </VBox>
             <VBox fx:id="day5" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="130.0">
@@ -59,6 +82,12 @@
                   <Label fx:id="temperature5" prefHeight="20.0" prefWidth="130.0" text="temperature: " />
                   <Label fx:id="windspped5" prefHeight="18.0" prefWidth="130.0" text="wind spped: " />
                   <Label fx:id="probability5" prefHeight="18.0" prefWidth="130.0" text="probability: " />
+                  <Button contentDisplay="CENTER"
+                          mnemonicParsing="false"
+                          onAction="#showMoreDay5"
+                          style="-fx-background-color: #87CEFA; -fx-background-radius: 7;"
+                          text="More"
+                          textAlignment="CENTER" />
                </children>
             </VBox>
          </children>
