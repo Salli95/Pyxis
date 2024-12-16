@@ -1,132 +1,61 @@
+
+
+
 package com.example.pyxis;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import java.time.LocalDate;
-import java.time.DayOfWeek;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-
-import static com.example.pyxis.Conection.*;
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.util.Locale;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.*;
+import java.io.IOException;
 
 public class WeatherController {
 
-    @FXML
-    private Label Day1;
+    @FXML private Label Day1, Day2, Day3, Day4, Day5;
+    @FXML private Label temperature1, temperature2, temperature3, temperature4, temperature5;
+    @FXML private Label windspped1, windspped2, windspped3, windspped4, windspped5;
+    @FXML private Label probability1, probability2, probability3, probability4, probability5;
 
-    @FXML
-    private Label Day2;
+    @FXML private Button Update;
+    @FXML private Label city, output, time_of_update;
 
-    @FXML
-    private Label Day3;
+    @FXML private ImageView day1ImageView, day2ImageView, day3ImageView, day4ImageView, day5ImageView;
+    @FXML private VBox day1, day2, day3, day4, day5;
 
-    @FXML
-    private Label Day4;
+    private final DatabaseConnection dbConnection = new DatabaseConnection();
 
-    @FXML
-    private Label Day5;
-
-    @FXML
-    private Button Update;
-
-    @FXML
-    private Label city;
-
-    @FXML
-    private VBox day1;
-
-    @FXML
-    private ImageView day1ImageView;
-
-    @FXML
-    private VBox day2;
-
-    @FXML
-    private ImageView day2ImageView;
-
-    @FXML
-    private VBox day3;
-
-    @FXML
-    private ImageView day3ImageView;
-
-    @FXML
-    private VBox day4;
-
-    @FXML
-    private ImageView day4ImageView;
-
-    @FXML
-    private VBox day5;
-
-    @FXML
-    private ImageView day5ImageView;
-
-    @FXML
-    private HBox mainpanel;
-
-    @FXML
-    private Label output;
-
-    @FXML
-    private Label probability1;
-
-    @FXML
-    private Label probability2;
-
-    @FXML
-    private Label probability3;
-
-    @FXML
-    private Label probability4;
-
-    @FXML
-    private Label probability5;
-
-    @FXML
-    private Label temperature1;
-
-    @FXML
-    private Label temperature2;
-
-    @FXML
-    private Label temperature3;
-
-    @FXML
-    private Label temperature4;
-
-    @FXML
-    private Label temperature5;
-
-    @FXML
-    private Label time_of_update;
-
-    @FXML
-    private Label windspped1;
-
-    @FXML
-    private Label windspped2;
-
-    @FXML
-    private Label windspped3;
-
-    @FXML
-    private Label windspped4;
-
-    @FXML
-    private Label windspped5;
     @FXML
     public void initialize() throws SQLException, ClassNotFoundException {
         selectCity();
+        fillWeatherData();
+        displayWeatherIcons();
     }
+
+    @FXML
+    private void updateWeather() throws IOException, SQLException, ClassNotFoundException {
+        ParsingWebSite parsingWebSite = new ParsingWebSite();
+        parsingWebSite.parseData(); // Simulates data fetching from an external source
+
+        selectCity();
+        fillWeatherData();
+        displayWeatherIcons();
+        output.setText("Weather successfully updated for the next 5 days.");
+    }
+
     @FXML
     private void showMoreDay1() throws SQLException, ClassNotFoundException {
         showMoreForDay(Day1);
@@ -152,242 +81,175 @@ public class WeatherController {
         showMoreForDay(Day5);
     }
 
-
-    @FXML
-    private void updateWeather() throws IOException, SQLException, ClassNotFoundException {
-        ParsingWebSite parsingWebSite = new ParsingWebSite();
-        parsingWebSite.parseData();
-        selectCity();
-        output.setText("Погода успешно обновлена на ближайшие 5 дней.");
-        displayWeatherIcons();
-    }
-
     private void showMoreForDay(Label dayLabel) throws SQLException, ClassNotFoundException {
         String date = (String) dayLabel.getUserData();
         showAdditionalWeatherData(date);
     }
+
     private void showAdditionalWeatherData(String date) throws SQLException, ClassNotFoundException {
-        Connection connection = new Conection().getDbConnection();
+        if (date == null) {
+            output.setText("No additional data available for null");
+            return;
+        }
 
-        // Добавляем поля wind_speed и description в запрос
-        String sql = "SELECT "
-                + DatabaseFields.humidity + ", "
-                + DatabaseFields.wind_direction + ", "
-                + DatabaseFields.precipitation_probability + ", "
-                + DatabaseFields.wind_speed + ", "
-                + DatabaseFields.description + " "
-                + "FROM " + DatabaseFields.Table_weather + " WHERE " + DatabaseFields.forecast_date + " = ? LIMIT 1";
+        try (Connection connection = dbConnection.getDbConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT forecast_date, temperature, humidity, wind_direction, precipitation_probability, wind_speed, description "
+                             + "FROM weather WHERE forecast_date = ? LIMIT 1")) {
 
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, date);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    int humidity = resultSet.getInt(DatabaseFields.humidity);
-                    double windDirection = resultSet.getDouble(DatabaseFields.wind_direction);
-                    int precipitationProbability = resultSet.getInt(DatabaseFields.precipitation_probability);
-                    double windSpeed = resultSet.getDouble(DatabaseFields.wind_speed);
-                    String desc = resultSet.getString(DatabaseFields.description);
+                    String forecastDate = resultSet.getString("forecast_date");
+                    double temperature = resultSet.getDouble("temperature");
+                    int humidity = resultSet.getInt("humidity");
+                    double windDirection = resultSet.getDouble("wind_direction");
+                    int precipitationProbability = resultSet.getInt("precipitation_probability");
+                    double windSpeed = resultSet.getDouble("wind_speed");
+                    String description = resultSet.getString("description");
 
-                    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-                    alert.setTitle("More Weather Details");
-                    alert.setHeaderText("Additional details for " + date);
-                    alert.setContentText(
-                            "Description: " + desc + "\n" +
-                                    "Humidity: " + humidity + "%\n" +
-                                    "Wind Direction: " + windDirection + "°\n" +
-                                    "Wind Speed: " + windSpeed + " m/s\n" +
-                                    "Precipitation Probability: " + precipitationProbability + "%"
+                    // Convert forecast date to day of the week
+                    String dayOfWeek = LocalDate.parse(forecastDate).getDayOfWeek()
+                            .getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("AdditionalInfoView.fxml"));
+                    VBox root = loader.load();
+
+                    AdditionalInfoController controller = loader.getController();
+                    controller.setData(
+                            dayOfWeek + " (" + forecastDate + ")", // Show day of week + date
+                            temperature, description, humidity, windDirection, windSpeed, precipitationProbability
                     );
-                    alert.showAndWait();
+
+                    Stage stage = new Stage();
+                    stage.setTitle("Additional Weather Details");
+                    stage.setScene(new Scene(root));
+                    stage.show();
                 } else {
                     output.setText("No additional data available for " + date);
                 }
             }
-        } catch (SQLException e) {
+        } catch (IOException | SQLException e) {
             output.setText("Error retrieving additional weather data: " + e.getMessage());
-        } finally {
-            connection.close();
         }
     }
-
-
-@FXML
-public void selectCity() throws SQLException, ClassNotFoundException {
-    Connection connection = new Conection().getDbConnection();
-
-    String sql = "SELECT city, forecast_time, weather_icon FROM " + DatabaseFields.Table_weather + " LIMIT 1";
-
-    try (PreparedStatement statement = connection.prepareStatement(sql);
-         ResultSet resultSet = statement.executeQuery()) {
-
-        if (resultSet.next()) {
-            // Получаем город
-            city.setText("City: " + resultSet.getString("city"));
-
-            // Получаем время последнего обновления
-            Timestamp lastUpdated = resultSet.getTimestamp("forecast_time");
-            if (lastUpdated != null) {
-                // Преобразуем время в строку для отображения
-                String formattedTime = new SimpleDateFormat("dd.MM.yyyy \n HH:mm:ss").format(lastUpdated);
-                time_of_update.setText("Last update: \n" + formattedTime);
-            } else {
-                output.setText("Время обновления не доступно.");
-            }
-
-//            String iconCode = resultSet.getString("weather_icon");
-//            if (iconCode != null) {
-//                String imageUrl = "https://openweathermap.org/img/wn/" + iconCode + "@2x.png";
-//                weatherIcon.setImage(new javafx.scene.image.Image(imageUrl));
-//            } else {
-//                output.setText("Иконка погоды отсутствует.");
-//            }
-
-
-        } else {
-            output.setText("Данные отсутствуют.");
-        }
-    } catch (SQLException e) {
-        output.setText("Ошибка: " + e.getMessage());
-    }
-}
-
 
     @FXML
-    public void displayWeatherIcons() throws SQLException, ClassNotFoundException {
-        Connection connection = new Conection().getDbConnection();
-
-        String sql = "SELECT weather_icon FROM " + DatabaseFields.Table_weather + " ORDER BY forecast_time LIMIT 5";
-
-        try (PreparedStatement statement = connection.prepareStatement(sql);
+    public void selectCity() throws SQLException, ClassNotFoundException {
+        try (Connection connection = dbConnection.getDbConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT city, forecast_time FROM weather LIMIT 1");
              ResultSet resultSet = statement.executeQuery()) {
 
-            int dayIndex = 0;
-            while (resultSet.next()) {
-                String iconCode = resultSet.getString("weather_icon");
-                iconCode = iconCode.replace("n", "d");
-                if (iconCode != null) {
-                    String imageUrl = "https://openweathermap.org/img/wn/" + iconCode + "@2x.png";
-                    ImageView iconImageView = getIconImageView(dayIndex);
-                    iconImageView.setImage(new javafx.scene.image.Image(imageUrl));
-                } else {
-                    output.setText("Иконка погоды отсутствует.");
+            if (resultSet.next()) {
+                city.setText("City: " + resultSet.getString("city"));
+                Timestamp lastUpdated = resultSet.getTimestamp("forecast_time");
+                if (lastUpdated != null) {
+                    String formattedTime = new SimpleDateFormat("dd.MM.yyyy \n HH:mm:ss").format(lastUpdated);
+                    time_of_update.setText("Last update: \n" + formattedTime);
                 }
-                dayIndex++;
             }
         } catch (SQLException e) {
-            output.setText("Ошибка: " + e.getMessage());
+            output.setText("Error retrieving city: " + e.getMessage());
         }
     }
 
-    private ImageView getIconImageView(int dayIndex) {
-        switch (dayIndex) {
-            case 0:
-                return day1ImageView;
-            case 1:
-                return day2ImageView;
-            case 2:
-                return day3ImageView;
-            case 3:
-                return day4ImageView;
-            case 4:
-                return day5ImageView;
-            default:
-                return null;
+    @FXML
+    private void displayWeatherIcons() throws SQLException, ClassNotFoundException {
+        String query = "SELECT weather_icon FROM weather ORDER BY forecast_date ASC LIMIT 5";
+        List<String> weatherIcons = new ArrayList<>();
+
+        try (Connection connection = dbConnection.getDbConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+
+            // Fetch the weather_icon codes from the database
+            while (resultSet.next()) {
+                String iconCode = resultSet.getString("weather_icon");
+
+                // Ensure iconCode is not null or empty
+                if (iconCode != null && !iconCode.isEmpty()) {
+                    // Modify specific cases for snowflakes, clouds, and the sun
+                    if (iconCode.startsWith("13")) {
+                        // Snowflakes: Always dark
+                        iconCode = "13n";
+                    } else if (iconCode.startsWith("02") || iconCode.startsWith("03") || iconCode.startsWith("04")) {
+                        // Clouds: Always bright
+                        iconCode = iconCode.replace("n", "d");
+                    } else if (iconCode.startsWith("01")) {
+                        // Sun: Always bright orange
+                        iconCode = "01d";
+                    }
+
+                    weatherIcons.add(iconCode);
+                }
+            }
+
+            // Array of ImageViews for the days
+            ImageView[] iconViews = {day1ImageView, day2ImageView, day3ImageView, day4ImageView, day5ImageView};
+
+            // Update each ImageView with the corresponding weather icon
+            for (int i = 0; i < weatherIcons.size() && i < iconViews.length; i++) {
+                String iconCode = weatherIcons.get(i);
+                String imageUrl = "https://openweathermap.org/img/wn/" + iconCode + "@2x.png";
+
+                // Set the image for the corresponding day
+                iconViews[i].setImage(new javafx.scene.image.Image(imageUrl));
+            }
+        } catch (SQLException e) {
+            output.setText("Error displaying weather icons: " + e.getMessage());
         }
     }
 
 
     @FXML
-    protected void fillWeatherData() {
-        Conection conection = new Conection();
-        Connection conn = null;
+    protected void fillWeatherData() throws SQLException, ClassNotFoundException {
+        String query = "SELECT forecast_date, temperature, wind_speed, precipitation_probability, description FROM weather ORDER BY forecast_date ASC";
+        List<WeatherDay> weatherDays = new ArrayList<>();
 
-        try {
-            conn = conection.getDbConnection();
-            System.out.println("Connected to the database successfully.");
-        } catch (ClassNotFoundException | SQLException e) {
-            System.out.println("Error connecting to the database: " + e.getMessage());
-            e.printStackTrace();
-            return;
-        }
+        try (Connection connection = dbConnection.getDbConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
 
-        if (conn != null) {
-            try {
-                String query = "SELECT forecast_date, temperature, wind_speed, precipitation_probability FROM weather";
-                Statement statement = conn.createStatement();
-                ResultSet resultSet = statement.executeQuery(query);
-                System.out.println("Query executed successfully.");
-
-                // Массив русских названий дней недели:
-                // DayOfWeek.getValue() дает: Monday=1, Tuesday=2, ..., Sunday=7
-                String[] daysEng = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-
-                int i = 0;
-                while (resultSet.next()) {
-                    if (i >= mainpanel.getChildren().size()) {
-                        System.out.println("Not enough VBox elements in mainpanel.");
-                        break;
-                    }
-
-                    VBox vbox = (VBox) mainpanel.getChildren().get(i);
-                    if (vbox == null) {
-                        System.out.println("VBox is null at index " + i);
-                        continue;
-                    }
-
-                    if (vbox.getChildren().size() >= 5) {
-                        Label dayLabel = (Label) vbox.getChildren().get(1); // Второй элемент в VBox
-                        Label temperatureLabel = (Label) vbox.getChildren().get(2); // Третий
-                        Label windSpeedLabel = (Label) vbox.getChildren().get(3); // Четвёртый
-                        Label probabilityLabel = (Label) vbox.getChildren().get(4); // Пятый
-
-                        String forecastDate = resultSet.getString("forecast_date");
-                        double temperature = resultSet.getDouble("temperature");
-                        double windSpeed = resultSet.getDouble("wind_speed");
-                        int precipitationProbability = resultSet.getInt("precipitation_probability");
-
-                        // Преобразуем строку с датой в LocalDate
-                        // Предполагается, что forecast_date в формате "YYYY-MM-DD"
-                        LocalDate date = LocalDate.parse(forecastDate);
-
-                        // Получаем день недели
-                        DayOfWeek dayOfWeek = date.getDayOfWeek();
-                        // Конвертируем его в индекс для массива daysRus
-                        // Monday=1, ... Sunday=7
-                        int dayIndex = dayOfWeek.getValue();
-                        String dayName = daysEng[dayIndex - 1];
-
-                        // Устанавливаем значения
-                        dayLabel.setText("Day: " + dayName);
-                        dayLabel.setUserData(forecastDate);
-                        temperatureLabel.setText("Temperature: " + temperature + "°C");
-                        windSpeedLabel.setText("Wind Speed: " + windSpeed + " m/s");
-                        probabilityLabel.setText("Probability: " + precipitationProbability + "%");
-                    } else {
-                        System.out.println("VBox does not have enough children at index " + i);
-                    }
-
-                    i++;
-                    if (i >= 5) break;
-                }
-            } catch (SQLException e) {
-                System.out.println("Error while executing the query: " + e.getMessage());
-                e.printStackTrace();
-            } finally {
-                try {
-                    conn.close();
-                    System.out.println("Database connection closed.");
-                } catch (SQLException e) {
-                    System.out.println("Error closing database connection: " + e.getMessage());
-                    e.printStackTrace();
-                }
+            while (resultSet.next()) {
+                WeatherDay weatherDay = new WeatherDay();
+                weatherDay.setForecastDate(resultSet.getString("forecast_date"));
+                weatherDay.setTemperature(resultSet.getDouble("temperature"));
+                weatherDay.setWindSpeed(resultSet.getDouble("wind_speed"));
+                weatherDay.setPrecipitationProbability(resultSet.getInt("precipitation_probability"));
+                weatherDay.setDescription(resultSet.getString("description"));
+                weatherDays.add(weatherDay);
             }
-        } else {
-            System.out.println("Database connection is null.");
+
+            Collections.sort(weatherDays);
+
+            // Labels for display
+            Label[] dayLabels = {Day1, Day2, Day3, Day4, Day5};
+            Label[] tempLabels = {temperature1, temperature2, temperature3, temperature4, temperature5};
+            Label[] windLabels = {windspped1, windspped2, windspped3, windspped4, windspped5};
+            Label[] probLabels = {probability1, probability2, probability3, probability4, probability5};
+
+            // Ensure forecast dates dynamically determine day names
+            for (int i = 0; i < weatherDays.size() && i < dayLabels.length; i++) {
+                WeatherDay weatherDay = weatherDays.get(i);
+
+                // Convert forecast_date to a LocalDate for proper day of the week
+                LocalDate forecastDate = LocalDate.parse(weatherDay.getForecastDate());
+                String dayOfWeek = forecastDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+
+                dayLabels[i].setText(dayOfWeek);  // Display the correct day name
+                tempLabels[i].setText("Temperature: " + weatherDay.getTemperature() + "°C");
+                windLabels[i].setText("Wind Speed: " + weatherDay.getWindSpeed() + " m/s");
+                probLabels[i].setText("Probability: " + weatherDay.getPrecipitationProbability() + "%");
+
+                dayLabels[i].setUserData(weatherDay.getForecastDate()); // Keep the correct date for 'More' buttons
+            }
+        } catch (SQLException e) {
+            output.setText("Error filling weather data: " + e.getMessage());
         }
     }
 
 
 
-    ///////////////////////////////////////////////////////////////////
 }
+

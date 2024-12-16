@@ -104,8 +104,8 @@ public class ParsingWebSite {
                                         String description, int humidity, double windSpeed, String windDirection,
                                         int precipitationProbability, String weatherIcon, Timestamp forecastTime) {
 
-        Conection connectionClass = new Conection();
-        Connection conn = null;
+        DatabaseConnection connectionClass = new DatabaseConnection();
+        java.sql.Connection conn = null;
         PreparedStatement pstmt = null;
 
         try {
@@ -159,8 +159,8 @@ public class ParsingWebSite {
     }
 
     private void clearAllData() {
-        Conection connectionClass = new Conection();
-        Connection conn = null;
+        DatabaseConnection connectionClass = new DatabaseConnection();
+        java.sql.Connection conn = null;
         Statement stmt = null;
 
         try {

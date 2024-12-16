@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
 public class Weather extends Application {
     @Override
     public void start(Stage stage) throws IOException {
@@ -18,28 +17,19 @@ public class Weather extends Application {
         stage.setScene(scene);
         stage.show();
 
-
         WeatherController controller = fxmlLoader.getController();
         Platform.runLater(() -> {
-
             try {
                 controller.selectCity();
                 controller.fillWeatherData();
-                controller.displayWeatherIcons();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
+                 // This should now work without errors
+            } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-
         });
-
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         launch();
-
     }
-
-
 }

@@ -1,0 +1,74 @@
+/* Root pane - background gradient */
+.pane {
+    -fx-background-color: linear-gradient(to bottom, #fff1e1, #ffe4c4);
+}
+
+/* General label styling - smaller text */
+.label {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 12px; /* Smaller font size */
+    -fx-text-fill: #5a5a5a; /* Subtle dark gray */
+}
+
+/* Header labels - bold titles, slightly smaller */
+.header-label {
+    -fx-font-size: 14px; /* Reduced size */
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333; /* Darker text */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 2, 0, 0, 1);
+}
+
+/* Buttons - hover effects and shadows */
+.button {
+    -fx-background-color: #87CEFA; /* Light blue */
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 12px; /* Smaller button text */
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 4, 0, 0, 2);
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #1E90FF; /* Brighter blue on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 6, 0, 0, 3);
+}
+
+/* Specific styles for additional info window */
+.additional-window {
+    -fx-background-color: #fff1e1; /* Light peach background */
+    -fx-border-color: #f4a460; /* Sandy border */
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-padding: 10px; /* Slightly smaller padding */
+}
+
+/* Highlight important text */
+.important-text {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #d2691e; /* Chocolate color */
+}
+/* AdditionalInfoView Root Style */
+#additionalViewRoot {
+    -fx-background-color: linear-gradient(to bottom, #fff1e1, #ffe4c4);
+    -fx-background-radius: 10;
+    -fx-border-color: #F4A460;
+    -fx-border-width: 3;
+    -fx-border-radius: 5;
+    -fx-padding: 15;
+}
+
+/* Additional Labels */
+.additional-header {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.additional-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #5a5a5a;
+}
+
+

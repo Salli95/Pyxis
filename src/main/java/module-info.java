@@ -5,7 +5,6 @@ module com.example.pyxis {
     requires org.jsoup;
     requires com.fasterxml.jackson.databind;
 
-
     opens com.example.pyxis to javafx.fxml;
     exports com.example.pyxis;
 }

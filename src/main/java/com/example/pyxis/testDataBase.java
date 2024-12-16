@@ -1,6 +1,5 @@
 package com.example.pyxis;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -8,8 +7,8 @@ import java.util.Scanner;
 
 public class testDataBase {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        Conection conect = new Conection();
-        Connection connection = conect.getDbConnection();
+        DatabaseConnection conect = new DatabaseConnection();
+        java.sql.Connection connection = conect.getDbConnection();
 
         Scanner scanner = new Scanner(System.in);
 

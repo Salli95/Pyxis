@@ -4,8 +4,8 @@ package com.example.pyxis;
 
 public class ConfigsDataBase {
     protected static  String dbHost = "localhost";
-    protected static  String dbPort = "3307";
+    protected static  String dbPort = "3306";
     protected static  String dbUser = "root";
-    protected static  String dbPass = "stR756785!";
+    protected static  String dbPass = "Smokesim_2";
     protected static  String dbName = "weather";
 }

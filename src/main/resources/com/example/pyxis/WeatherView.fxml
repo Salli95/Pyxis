@@ -7,89 +7,83 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="377.0" prefWidth="670.0" style="-fx-background-color: #FFDEAD; -fx-background-radius: 10; -fx-border-color: #F4A460; -fx-border-width: 4; -fx-border-radius: 4;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pyxis.WeatherController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="377.0" prefWidth="670.0" style="-fx-background-color: linear-gradient(to bottom, #fff1e1, #ffe4c4); -fx-background-radius: 10; -fx-border-color: #F4A460; -fx-border-width: 4; -fx-border-radius: 4;" stylesheets="@style1.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pyxis.WeatherController">
+
    <children>
+      <!-- Update Button -->
       <Button fx:id="Update" layoutX="604.0" layoutY="338.0" mnemonicParsing="false" onAction="#updateWeather" style="-fx-background-color: #87CEFA; -fx-background-radius: 5;" text="Update" />
+
+      <!-- Output Label -->
       <Label fx:id="output" alignment="CENTER" contentDisplay="CENTER" layoutX="152.0" layoutY="284.0" prefHeight="54.0" prefWidth="384.0" />
-      <Label fx:id="city" layoutX="14.0" layoutY="266.0" prefHeight="33.0" prefWidth="164.0" />
+
+      <!-- City and Last Update Labels -->
+      <Label fx:id="city" layoutX="14.0" layoutY="266.0" prefHeight="33.0" prefWidth="164.0" text="City: " />
       <Label fx:id="time_of_update" layoutX="596.0" layoutY="286.0" prefHeight="54.0" prefWidth="71.0" textAlignment="CENTER" />
+
+      <!-- Main Weather Panel -->
       <HBox fx:id="mainpanel" layoutX="10.0" layoutY="36.0" prefHeight="200.0" prefWidth="652.0" style="-fx-background-color: #F4A460; -fx-background-radius: 5;">
          <children>
+
+            <!-- Day 1 -->
             <VBox fx:id="day1" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="130.0">
                <children>
                   <ImageView fx:id="day1ImageView" fitHeight="60.0" fitWidth="60.0" />
-                  <Label fx:id="Day1" prefHeight="17.0" prefWidth="130.0" text="Day" />
-                  <Label fx:id="temperature1" prefHeight="20.0" prefWidth="130.0" text="temperature: " />
-                  <Label fx:id="windspped1" prefHeight="18.0" prefWidth="130.0" text="wind spped: " />
-                  <Label fx:id="probability1" prefHeight="18.0" prefWidth="130.0" text="probability: " />
-                  <Button contentDisplay="CENTER"
-                          mnemonicParsing="false"
-                          onAction="#showMoreDay1"
-                          style="-fx-background-color: #87CEFA; -fx-background-radius: 7;"
-                          text="More"
-                          textAlignment="CENTER" />
+                  <Label fx:id="Day1" text="Sunday" />
+                  <Label fx:id="temperature1" text="Temperature: " />
+                  <Label fx:id="windspped1" text="Wind Speed: " />
+                  <Label fx:id="probability1" text="Probability: " />
+                  <Button mnemonicParsing="false" onAction="#showMoreDay1" style="-fx-background-color: #87CEFA; -fx-background-radius: 7;" text="More" />
                </children>
             </VBox>
+
+            <!-- Day 2 -->
             <VBox fx:id="day2" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="130.0">
                <children>
                   <ImageView fx:id="day2ImageView" fitHeight="60.0" fitWidth="60.0" />
-                  <Label fx:id="Day2" prefHeight="17.0" prefWidth="130.0" text="Day" />
-                  <Label fx:id="temperature2" prefHeight="20.0" prefWidth="130.0" text="temperature: " />
-                  <Label fx:id="windspped2" prefHeight="18.0" prefWidth="130.0" text="wind spped: " />
-                  <Label fx:id="probability2" prefHeight="18.0" prefWidth="130.0" text="probability: " />
-                  <Button contentDisplay="CENTER"
-                          mnemonicParsing="false"
-                          onAction="#showMoreDay2"
-                          style="-fx-background-color: #87CEFA; -fx-background-radius: 7;"
-                          text="More"
-                          textAlignment="CENTER" />
+                  <Label fx:id="Day2" text="Monday" />
+                  <Label fx:id="temperature2" text="Temperature: " />
+                  <Label fx:id="windspped2" text="Wind Speed: " />
+                  <Label fx:id="probability2" text="Probability: " />
+                  <Button mnemonicParsing="false" onAction="#showMoreDay2" style="-fx-background-color: #87CEFA; -fx-background-radius: 7;" text="More" />
                </children>
             </VBox>
+
+            <!-- Day 3 -->
             <VBox fx:id="day3" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="130.0">
                <children>
                   <ImageView fx:id="day3ImageView" fitHeight="60.0" fitWidth="60.0" />
-                  <Label fx:id="Day3" prefHeight="17.0" prefWidth="130.0" text="Day" />
-                  <Label fx:id="temperature3" prefHeight="20.0" prefWidth="130.0" text="temperature: " />
-                  <Label fx:id="windspped3" prefHeight="18.0" prefWidth="130.0" text="wind spped: " />
-                  <Label fx:id="probability3" prefHeight="18.0" prefWidth="130.0" text="probability: " />
-                  <Button contentDisplay="CENTER"
-                          mnemonicParsing="false"
-                          onAction="#showMoreDay3"
-                          style="-fx-background-color: #87CEFA; -fx-background-radius: 7;"
-                          text="More"
-                          textAlignment="CENTER" />
+                  <Label fx:id="Day3" text="Tuesday" />
+                  <Label fx:id="temperature3" text="Temperature: " />
+                  <Label fx:id="windspped3" text="Wind Speed: " />
+                  <Label fx:id="probability3" text="Probability: " />
+                  <Button mnemonicParsing="false" onAction="#showMoreDay3" style="-fx-background-color: #87CEFA; -fx-background-radius: 7;" text="More" />
                </children>
             </VBox>
+
+            <!-- Day 4 -->
             <VBox fx:id="day4" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="130.0">
                <children>
                   <ImageView fx:id="day4ImageView" fitHeight="60.0" fitWidth="60.0" />
-                  <Label fx:id="Day4" prefHeight="17.0" prefWidth="130.0" text="Day" />
-                  <Label fx:id="temperature4" prefHeight="20.0" prefWidth="130.0" text="temperature: " />
-                  <Label fx:id="windspped4" prefHeight="18.0" prefWidth="130.0" text="wind spped: " />
-                  <Label fx:id="probability4" prefHeight="18.0" prefWidth="130.0" text="probability: " />
-                  <Button contentDisplay="CENTER"
-                          mnemonicParsing="false"
-                          onAction="#showMoreDay4"
-                          style="-fx-background-color: #87CEFA; -fx-background-radius: 7;"
-                          text="More"
-                          textAlignment="CENTER" />
+                  <Label fx:id="Day4" text="Wednesday" />
+                  <Label fx:id="temperature4" text="Temperature: " />
+                  <Label fx:id="windspped4" text="Wind Speed: " />
+                  <Label fx:id="probability4" text="Probability: " />
+                  <Button mnemonicParsing="false" onAction="#showMoreDay4" style="-fx-background-color: #87CEFA; -fx-background-radius: 7;" text="More" />
                </children>
             </VBox>
+
+            <!-- Day 5 -->
             <VBox fx:id="day5" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="130.0">
                <children>
                   <ImageView fx:id="day5ImageView" fitHeight="60.0" fitWidth="60.0" />
-                  <Label fx:id="Day5" prefHeight="17.0" prefWidth="130.0" text="Day" />
-                  <Label fx:id="temperature5" prefHeight="20.0" prefWidth="130.0" text="temperature: " />
-                  <Label fx:id="windspped5" prefHeight="18.0" prefWidth="130.0" text="wind spped: " />
-                  <Label fx:id="probability5" prefHeight="18.0" prefWidth="130.0" text="probability: " />
-                  <Button contentDisplay="CENTER"
-                          mnemonicParsing="false"
-                          onAction="#showMoreDay5"
-                          style="-fx-background-color: #87CEFA; -fx-background-radius: 7;"
-                          text="More"
-                          textAlignment="CENTER" />
+                  <Label fx:id="Day5" text="Thursday" />
+                  <Label fx:id="temperature5" text="Temperature: " />
+                  <Label fx:id="windspped5" text="Wind Speed: " />
+                  <Label fx:id="probability5" text="Probability: " />
+                  <Button mnemonicParsing="false" onAction="#showMoreDay5" style="-fx-background-color: #87CEFA; -fx-background-radius: 7;" text="More" />
                </children>
             </VBox>
+
          </children>
       </HBox>
    </children>
