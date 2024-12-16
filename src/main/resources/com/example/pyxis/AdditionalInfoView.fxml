@@ -4,26 +4,26 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="10.0" style="-fx-padding: 20; -fx-background-color: linear-gradient(to bottom, #fff1e1, #ffe4c4); -fx-border-color: #A9A9A9; -fx-border-radius: 5; -fx-background-radius: 5;" stylesheets="@style1.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pyxis.AdditionalInfoController">
+<VBox prefHeight="229.0" prefWidth="267.0" spacing="10.0" style="-fx-padding: 20; -fx-background-color: linear-gradient(to bottom, #fff1e1, #ffe4c4); -fx-border-color: #A9A9A9; -fx-border-radius: 5; -fx-background-radius: 5;" stylesheets="@style1.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pyxis.AdditionalInfoController">
     <children>
         <!-- Date with Day of the Week -->
-        <Label fx:id="dateLabel" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2A2A2A; -fx-text-fill: #d2691e;" text="Date:">
+        <Label fx:id="dateLabel" alignment="TOP_LEFT" prefHeight="19.0" prefWidth="235.0" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2A2A2A; -fx-text-fill: #d2691e;" text="Date:">
          <font>
             <Font name="Arial" size="12.0" />
          </font></Label>
 
         <!-- Weather Details -->
-        <Label fx:id="temperatureLabel" style="-fx-font-size: 14px; -fx-font-family: Verdana;" text="Temperature:">
+        <Label fx:id="temperatureLabel" contentDisplay="TOP" prefHeight="18.0" prefWidth="220.0" style="-fx-font-size: 14px; -fx-font-family: Verdana;" text="Temperature:">
          <font>
             <Font name="Arial" size="12.0" />
          </font></Label>
-        <Label fx:id="descriptionLabel" style="-fx-font-size: 14px;" text="Description:" />
-        <Label fx:id="humidityLabel" style="-fx-font-size: 14px;" text="Humidity:">
+        <Label fx:id="descriptionLabel" alignment="TOP_LEFT" contentDisplay="TOP" prefHeight="18.0" prefWidth="210.0" style="-fx-font-size: 14px;" text="Description:" />
+        <Label fx:id="windDirectionLabel" prefHeight="18.0" prefWidth="210.0" style="-fx-font-size: 14px;" text="Wind Direction:" />
+        <Label fx:id="windSpeedLabel" alignment="TOP_LEFT" contentDisplay="TOP" prefHeight="18.0" prefWidth="211.0" style="-fx-font-size: 14px;" text="Wind Speed:" />
+        <Label fx:id="precipitationLabel" alignment="TOP_LEFT" contentDisplay="TOP" prefHeight="18.0" prefWidth="203.0" style="-fx-font-size: 14px;" stylesheets="@style1.css" text="Probability:" />
+        <Label fx:id="humidityLabel" alignment="TOP_LEFT" contentDisplay="TOP" prefHeight="18.0" prefWidth="216.0" style="-fx-font-size: 14px;" text="Humidity:">
          <font>
             <Font name="Arial" size="12.0" />
          </font></Label>
-        <Label fx:id="windDirectionLabel" style="-fx-font-size: 14px;" text="Wind Direction:" />
-        <Label fx:id="windSpeedLabel" style="-fx-font-size: 14px;" text="Wind Speed:" />
-        <Label fx:id="precipitationLabel" style="-fx-font-size: 14px;" stylesheets="@style1.css" text="Precipitation Probability:" />
     </children>
 </VBox>
